@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import EndUser, JobPosting, ManagerJobPosting
+from .models import EndUser, JobPosting, ManagerJobPosting, HRRUser, Company
 from django.db import models
 
 
@@ -7,6 +7,18 @@ class EnduserSerializer(serializers.ModelSerializer):
     class Meta:
         model = EndUser
         # fields = ['id', 'title', 'author', 'email']
+        fields = '__all__'
+
+
+class HRRUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HRRUser
+        fields = '__all__'
+
+
+class CompanySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Company
         fields = '__all__'
 
 
