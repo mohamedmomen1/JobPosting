@@ -93,8 +93,6 @@ class Job_postingDetailsView1(ListAPIView):
     lookup_field = 'company'
 
     def get_queryset(self):
-        # original qs
         qs = super().get_queryset()
-        # filter by a variable captured from url, for example
         return qs.filter(company_id=self.kwargs['company'])
 
