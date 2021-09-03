@@ -2,9 +2,10 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.generics import ListAPIView, RetrieveAPIView, UpdateAPIView
 
-from .models import EndUser, JobPosting, HRRUser, Company
+from .models import EndUser, JobPosting, HRRUser, Company, Department, EndUserEmployer
 
-from .serializers import EnduserSerializer, Job_postingSerializer, HRRUserSerializer, CompanySerializer
+from .serializers import EnduserSerializer, Job_postingSerializer, HRRUserSerializer, CompanySerializer, \
+    DepartmentSerializer, EndUserEmployerSerializer
 from django_filters import rest_framework as filters
 
 from rest_framework.decorators import api_view
@@ -30,6 +31,16 @@ class ChangeUserAPIView(UpdateAPIView):
     # permission_classes = [IsAuthenticated]
     serializer_class = EnduserSerializer
     queryset = EndUser.objects.all()
+
+
+# class addEndUserEmployer(RetrieveAPIView):
+#   serializer_class = EndUserEmployerSerializer
+#  queryset = EndUserEmployer.objects.all()
+# lookup_url_kwarg = 'username'
+#  lookup_field = 'username'
+
+# def get_queryset(self):
+#    return EndUser.objects.filter(username=self.kwargs['username'])
 
 
 class HRRDetailsView(RetrieveAPIView):
@@ -66,6 +77,14 @@ class ChangeCompanyAPIView(UpdateAPIView):
     queryset = Company.objects.all()
 
 
+# class Department_for_company(ListAPIView):
+#  serializer_class = DepartmentSerializer
+# queryset = Department.objects.all()
+
+# def get_queryset(self):
+#   return Department.objects.filter(company_id=self.kwargs['company'])
+
+
 class Job_postingDetailsView(RetrieveAPIView):
     serializer_class = Job_postingSerializer
     queryset = JobPosting.objects.all()
@@ -85,7 +104,7 @@ class ChangeJob_postingAPIView(UpdateAPIView):
     # kwarg = key word argument
 
 
-class Job_postingDetailsView1(ListAPIView):
+class Job_postings_for_companyView(ListAPIView):
     serializer_class = Job_postingSerializer
     queryset = JobPosting.objects.all()
     # queryset = JobPosting.objects.filter(company__name=Company)
@@ -93,6 +112,7 @@ class Job_postingDetailsView1(ListAPIView):
     lookup_field = 'company'
 
     def get_queryset(self):
-        qs = super().get_queryset()
-        return qs.filter(company_id=self.kwargs['company'])
-
+        return JobPosting.objects.filter(company_id=self.kwargs['company'])
+    # def get_queryset(self):
+    #   qs = super().get_queryset()
+    #  return qs.filter(company_id=self.kwargs['company'])
