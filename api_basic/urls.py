@@ -35,7 +35,6 @@ urlpatterns = [
     path('Company/<int:pk>/change', ChangeCompanyAPIView.as_view()),
 
     path('removeEmployer/<int:username>', remove.as_view()),
-    path('create_department/', Department_for_company.as_view()),
     path('Job/<int:pk>', Job_postingDetailsView.as_view()),
     path('Job/', Job_postingView.as_view()),
     path('Job/<int:pk>/change', ChangeJob_postingAPIView.as_view()),
