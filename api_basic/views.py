@@ -1,5 +1,8 @@
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.views.generic import CreateView
 from rest_framework.generics import ListAPIView, RetrieveAPIView, UpdateAPIView
 
 from .models import EndUser, JobPosting, HRRUser, Company, Department, EndUserEmployer
@@ -10,7 +13,7 @@ from django_filters import rest_framework as filters
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, generics
 from rest_framework.views import APIView
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -33,14 +36,20 @@ class ChangeUserAPIView(UpdateAPIView):
     queryset = EndUser.objects.all()
 
 
-# class addEndUserEmployer(RetrieveAPIView):
-#   serializer_class = EndUserEmployerSerializer
-#  queryset = EndUserEmployer.objects.all()
-# lookup_url_kwarg = 'username'
-#  lookup_field = 'username'
+# class addEndUserEmployer(CreateView):
+#  serializer_class = EndUserEmployerSerializer
+# queryset = EndUser.objects.all()
+# def get_form_kwargs(self):
+#   kwargs = super(addEndUserEmployer, self).get_form_kwargs()
+#  kwargs.update({'user': self.request.user})
+# return kwargs
+
+
+#  lookup_url_kwarg = 'username'
+# lookup_field = 'username'
 
 # def get_queryset(self):
-#    return EndUser.objects.filter(username=self.kwargs['username'])
+#   return EndUserEmployer.objects.filter(username=self.kwargs['username'])
 
 
 class HRRDetailsView(RetrieveAPIView):
@@ -77,14 +86,6 @@ class ChangeCompanyAPIView(UpdateAPIView):
     queryset = Company.objects.all()
 
 
-# class Department_for_company(ListAPIView):
-#  serializer_class = DepartmentSerializer
-# queryset = Department.objects.all()
-
-# def get_queryset(self):
-#   return Department.objects.filter(company_id=self.kwargs['company'])
-
-
 class Job_postingDetailsView(RetrieveAPIView):
     serializer_class = Job_postingSerializer
     queryset = JobPosting.objects.all()
@@ -116,3 +117,17 @@ class Job_postings_for_companyView(ListAPIView):
     # def get_queryset(self):
     #   qs = super().get_queryset()
     #  return qs.filter(company_id=self.kwargs['company'])
+
+
+class remove(ListAPIView):
+    serializer_class = EndUserEmployerSerializer
+    queryset = EndUserEmployer.objects.all()
+    lookup_url_kwarg = 'user'
+    lookup_field = 'user'
+
+    def delete(self, request, *args, **kwargs):
+        employees = EndUserEmployer.objects.filter(user_id=kwargs['username'])
+
+        if employees.count() > 0:
+            employees.delete()
+        return Response("Employer deleted", status=status.HTTP_204_NO_CONTENT)
