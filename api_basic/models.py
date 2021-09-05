@@ -32,7 +32,7 @@ class Company(models.Model):
     phone = models.CharField(max_length=100)
 
     def __str__(self):
-        return self.id
+        return self.name
 
 
 class EndUserEmail(models.Model):
@@ -65,9 +65,6 @@ class EndUserEmployer(models.Model):
     company = models.ForeignKey(Company, on_delete=models.PROTECT)
     begin_date = models.DateTimeField()
 
-    def __str__(self):
-        return self.user
-
 
 class JobPosting(models.Model):
     description = models.CharField(max_length=100)
@@ -85,20 +82,18 @@ class JobPosting(models.Model):
     is_man_or_intern = models.CharField(max_length=100)
     contract_type = models.CharField(max_length=100)
 
-    minimum_days = models.IntegerField()
+    minimum_days = models.IntegerField(null=True, blank=True)
     kind = models.CharField(max_length=100)
 
     def __str__(self):
-        return self.id
+        return self.description
 
 
-class Department(models.Model):  # TODO fix name
+class Department(models.Model):
     name = models.CharField(max_length=100)
-    size = models.IntegerField(max_length=100)
+    size = models.IntegerField()
     company = models.ForeignKey(Company, on_delete=models.PROTECT)
     job_posting = models.ForeignKey(JobPosting, on_delete=models.PROTECT)
-
-    # TODO where are foreign keys?
 
     def __str__(self):
         return self.name
