@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import EndUser, JobPosting, ManagerJobPosting, HRRUser, Company
+from .models import EndUser, JobPosting, ManagerJobPosting, HRRUser, Company, Department, EndUserEmployer, Application
 from django.db import models
 
 
@@ -15,11 +15,52 @@ class HRRUserSerializer(serializers.ModelSerializer):
         model = HRRUser
         fields = '__all__'
 
+    def create(self, validated_data: dict):
+        HRRuser = HRRUser.objects.create(username=validated_data['username'], password=validated_data['password'],
+                                         email=validated_data['email'],
+                                         first_name=validated_data['first_name'],
+                                         last_name=validated_data['last_name'],
+                                         end_user=validated_data['end_user'],
+                                         )
+
+        return HRRuser
+
+
+class EndUserEmployerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EndUserEmployer
+        fields = '__all__'
+
 
 class CompanySerializer(serializers.ModelSerializer):
     class Meta:
         model = Company
         fields = '__all__'
+
+
+class DepartmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Department
+        fields = '__all__'
+
+
+class ApplicationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Application
+        fields = '__all__'
+
+        def create(self, validated_data: dict):
+            application = Application.objects.create(job_posting=validated_data['job_posting'],
+                                                     user=validated_data['user'],
+                                                     apply_date=validated_data['apply_date'],
+                                                     resume=validated_data['resume'],
+                                                     university=validated_data['university'],
+                                                     program=validated_data['program'],
+                                                     gpa=validated_data['gpa'],
+                                                     standing=validated_data['standing'],
+                                                     num_days=validated_data['num_days'],
+                                                     )
+            return application
 
 
 class Job_postingSerializer(serializers.ModelSerializer):
