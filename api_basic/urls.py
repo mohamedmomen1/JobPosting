@@ -1,8 +1,10 @@
 from django.urls import path
+from rest_framework.routers import DefaultRouter
 
 from .views import UserDetailsView, ChangeUserAPIView, UsersView, Job_postingDetailsView, ChangeJob_postingAPIView, \
     Job_postingView, HRRsView, HRRDetailsView, ChangeHRRAPIView, CompanyView, ChangeCompanyAPIView, CompanyDetailsView, \
-    Job_postings_for_companyView, remove, create_hrrView, addEndUserEmployer,addApplication,Enduserlist
+    Job_postings_for_companyView, remove_employee, create_hrrView, addEndUserEmployer, addApplication, \
+    DepartmentDetailsView, create_department_for_company
 
 # urlpatterns = [
 #   path('ViewSet/', include(router.urls)),
@@ -15,7 +17,6 @@ from .views import UserDetailsView, ChangeUserAPIView, UsersView, Job_postingDet
 # path('generic/enduser/<int:id>', GenericsAPIView.as_view()),
 
 # ]
-
 
 urlpatterns = [
     # slug for string
@@ -34,12 +35,14 @@ urlpatterns = [
     path('Company/', CompanyView.as_view()),
     path('Company/<int:pk>/change', ChangeCompanyAPIView.as_view()),
 
-    path('addEndUserEmployer/',addEndUserEmployer.as_view()),
-    path('Enduserlist',Enduserlist.as_view()),
-    path('removeEmployer/<int:username>', remove.as_view()),
+    path('addEndUserEmployer/', addEndUserEmployer.as_view()),
+    # path('Enduserlist', Enduserlist.as_view()),
+    path('removeEmployer/<int:username>', remove_employee.as_view()),
 
     path('createHRR', create_hrrView.as_view()),
-    path('addapplication',addApplication.as_view()),
+    path('createDepartment', create_department_for_company.as_view()),
+    path('Department/<int:pk>', DepartmentDetailsView.as_view()),
+    path('addapplication', addApplication.as_view()),
 
     path('Job/<int:pk>', Job_postingDetailsView.as_view()),
     path('Job/', Job_postingView.as_view()),
