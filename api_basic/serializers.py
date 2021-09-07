@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import EndUser, JobPosting, ManagerJobPosting, HRRUser, Company, Department, EndUserEmployer, Application
+from .models import EndUser, JobPosting, ManagerJobPosting, HRRUser, Company, Department, EndUserEmployer, Application, \
+    EmploymentHistory
 from django.db import models
 
 
@@ -10,20 +11,16 @@ class EnduserSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class EmploymentHistorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EmploymentHistory
+        fields = '__all__'
+
+
 class HRRUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = HRRUser
         fields = '__all__'
-
-    def create(self, validated_data: dict):
-        HRRuser = HRRUser.objects.create(username=validated_data['username'], password=validated_data['password'],
-                                         email=validated_data['email'],
-                                         first_name=validated_data['first_name'],
-                                         last_name=validated_data['last_name'],
-                                         end_user=validated_data['end_user'],
-                                         )
-
-        return HRRuser
 
 
 class EndUserEmployerSerializer(serializers.ModelSerializer):
