@@ -10,7 +10,7 @@ from .models import JobPosting
 from .models import Department
 
 # from .models import Manager_job_posting
-# from .models import Application
+from .models import Application
 # from .models import CoursesForInterShipApps
 # from .models import InternshipJobPosting
 
@@ -24,6 +24,6 @@ admin.site.register(Department)
 admin.site.register(EndUserEmployer)
 admin.site.register(JobPosting)
 # admin.site.register(Manager_job_posting)
-# admin.site.register(Application)
+admin.site.register(Application)
 # admin.site.register(CoursesForInterShipApps)
 # admin.site.register(InternshipJobPosting)
