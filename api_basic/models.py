@@ -16,7 +16,6 @@ class EndUser(models.Model):
 class HRRUser(models.Model):
     username = models.CharField(max_length=100)
     password = models.CharField(max_length=300)
-    email = models.EmailField(max_length=100)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
 
@@ -121,7 +120,7 @@ class Application(models.Model):
     num_days = models.IntegerField()
 
     def __str__(self):
-        return self.job_posting
+        return self.program
 
 
 class CoursesForInterShipApps(models.Model):
