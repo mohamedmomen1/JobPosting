@@ -1,19 +1,19 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import CreateView
-from rest_framework.generics import ListAPIView, RetrieveAPIView, UpdateAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView, UpdateAPIView, get_object_or_404
 
-from .models import EndUser, JobPosting, HRRUser, Company, Department, EndUserEmployer
+from .models import EndUser, JobPosting, HRRUser, Company, Department, EndUserEmployer, Application
+from rest_framework.response import Response
 
 from .serializers import EnduserSerializer, Job_postingSerializer, HRRUserSerializer, CompanySerializer, \
-    DepartmentSerializer, EndUserEmployerSerializer
-from django_filters import rest_framework as filters
+    DepartmentSerializer, EndUserEmployerSerializer, ApplicationSerializer
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import status, generics
+from rest_framework import status, generics, permissions
 from rest_framework.views import APIView
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -36,9 +36,15 @@ class ChangeUserAPIView(UpdateAPIView):
     queryset = EndUser.objects.all()
 
 
-# class addEndUserEmployer(CreateView):
-#  serializer_class = EndUserEmployerSerializer
-# queryset = EndUser.objects.all()
+class addEndUserEmployer(CreateView):
+    queryset = EndUserEmployer.objects.all()
+    serializer_class = EndUserEmployerSerializer
+
+    def get(self, request, *args, **kwargs):
+        serializer = EndUserEmployerSerializer({EndUser, Company})
+        return Response(serializer.data)
+
+
 # def get_form_kwargs(self):
 #   kwargs = super(addEndUserEmployer, self).get_form_kwargs()
 #  kwargs.update({'user': self.request.user})
@@ -63,10 +69,17 @@ class HRRsView(ListAPIView):
     queryset = HRRUser.objects.all()
 
 
+class create_hrrView(CreateView):
+    serializer_class = HRRUserSerializer
+    queryset = HRRUser.objects.all()
+    fields = ['username', 'password', 'first_name', 'last_name', EndUser]
+
+
 class ChangeHRRAPIView(UpdateAPIView):
     # permission_classes = [IsAuthenticated]
     serializer_class = HRRUserSerializer
     queryset = HRRUser.objects.all()
+    fields = ['username', 'password', 'first_name', 'last_name', EndUser]
 
 
 class CompanyDetailsView(RetrieveAPIView):
@@ -84,6 +97,12 @@ class ChangeCompanyAPIView(UpdateAPIView):
     # permission_classes = [IsAuthenticated]
     serializer_class = CompanySerializer
     queryset = Company.objects.all()
+
+
+class addApplication(CreateView):
+    serializer_class = ApplicationSerializer
+    queryset = Application.objects.all()
+    fields = [JobPosting, EndUser, 'apply_date', 'resume', 'university', 'program', 'gpa', 'standing', 'num_days']
 
 
 class Job_postingDetailsView(RetrieveAPIView):
@@ -119,15 +138,26 @@ class Job_postings_for_companyView(ListAPIView):
     #  return qs.filter(company_id=self.kwargs['company'])
 
 
-class remove(ListAPIView):
+class remove(APIView):
     serializer_class = EndUserEmployerSerializer
     queryset = EndUserEmployer.objects.all()
-    lookup_url_kwarg = 'user'
-    lookup_field = 'user'
 
     def delete(self, request, *args, **kwargs):
-        employees = EndUserEmployer.objects.filter(user_id=kwargs['username'])
+        employees = EndUserEmployer.objects.filter(user_id=self.kwargs['username'])
 
-        if employees.count() > 0:
-            employees.delete()
+        employees.delete()
+
+        return Response({"result": "employees delete"})
+
+
+class Enduserlist(ListAPIView):
+    serializer_class = EndUserEmployerSerializer
+    queryset = EndUserEmployer.objects.all()
+
+
+def delete(self, request, *args, **kwargs):
+    employees = EndUserEmployer.objects.filter(user_id=self.kwargs['username'])
+
+    if employees.count() > 0:
+        employees.delete()
         return Response("Employer deleted", status=status.HTTP_204_NO_CONTENT)
