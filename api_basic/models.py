@@ -21,9 +21,6 @@ class HRRUser(models.Model):
 
     end_user = models.ForeignKey(EndUser, on_delete=models.PROTECT)
 
-    def get_absolute_url(self):
-        return f"/client/HRR/{self.id}"
-
     def __str__(self):
         return self.username
 
@@ -97,8 +94,8 @@ class Department(models.Model):
     company = models.ForeignKey(Company, on_delete=models.PROTECT)
     job_posting = models.ForeignKey(JobPosting, on_delete=models.PROTECT)
 
-    def get_absolute_url(self):
-        return f"/client/Department/{self.id}"
+    # def get_absolute_url(self):
+    #     return f"/client/Department/{self.id}"
 
     def __str__(self):
         return self.name
