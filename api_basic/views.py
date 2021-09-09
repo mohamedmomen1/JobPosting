@@ -1,9 +1,12 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import CreateView
+from django.shortcuts import redirect
 from rest_framework.generics import ListAPIView, RetrieveAPIView, UpdateAPIView, get_object_or_404
+from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.reverse import reverse
 
 from .models import EndUser, JobPosting, HRRUser, Company, Department, EndUserEmployer, Application
@@ -72,10 +75,12 @@ class HRRsView(ListAPIView):
 
 
 class create_hrrView(CreateView):
-    model = HRRUser
-    template_name = 'HHr'
-    fields = ['username', 'password', 'first_name', 'last_name', 'end_user']
+    serializer_class = HRRUserSerializer
     queryset = HRRUser.objects.all()
+    fields = ['username', 'password', 'first_name', 'last_name', 'end_user']
+
+    def post(self, request, *args, **kwargs):
+        return super(create_hrrView, self).post(request, *args, **kwargs)
 
 
 class DepartmentDetailsView(RetrieveAPIView):
@@ -84,10 +89,13 @@ class DepartmentDetailsView(RetrieveAPIView):
 
 
 class create_department_for_company(CreateView):
-    model = Department
-    template_name = 'Department'
-    fields = ['name', 'size', 'company', 'job_posting']
-    queryset = Department.objects.all()
+    serializer_class = CompanySerializer
+    queryset = Company.objects.all()
+    fields = '__all__'
+
+    def post(self, *args, **kwargs):
+        super().post(*args, **kwargs)
+        return redirect('create_department_for_company')
 
 
 class ChangeHRRAPIView(UpdateAPIView):
@@ -116,7 +124,7 @@ class ChangeCompanyAPIView(UpdateAPIView):
 class addApplication(CreateView):
     serializer_class = ApplicationSerializer
     queryset = Application.objects.all()
-    fields = [JobPosting, EndUser, 'apply_date', 'resume', 'university', 'program', 'gpa', 'standing', 'num_days']
+    fields = ['JobPosting', 'EndUser', 'apply_date', 'resume', 'university', 'program', 'gpa', 'standing', 'num_days']
 
 
 class Job_postingDetailsView(RetrieveAPIView):
