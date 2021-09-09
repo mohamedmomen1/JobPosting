@@ -22,6 +22,16 @@ class HRRUserSerializer(serializers.ModelSerializer):
         model = HRRUser
         fields = '__all__'
 
+    def create(self, validated_data: dict):
+        hrruser = HRRUser.objects.create(username=validated_data['username'],
+                                         password=validated_data['password'],
+                                         first_name=validated_data['first_name'],
+                                         last_name=validated_data['last_name'],
+                                         end_user=validated_data['end_user'],
+
+                                         )
+        return hrruser
+
 
 class EndUserEmployerSerializer(serializers.ModelSerializer):
     class Meta:
@@ -30,9 +40,21 @@ class EndUserEmployerSerializer(serializers.ModelSerializer):
 
 
 class CompanySerializer(serializers.ModelSerializer):
+    department = serializers.IntegerField(required=False)
+
     class Meta:
         model = Company
         fields = '__all__'
+
+    def create(self, validated_data: dict):
+        company = Company.objects.create(name=validated_data['name'],
+                                         address=validated_data['address'],
+                                         phone=validated_data['phone'])
+        Department.objects.create(
+            company=Company,
+            department_id=validated_data['department']
+        )
+        return company
 
 
 class DepartmentSerializer(serializers.ModelSerializer):
