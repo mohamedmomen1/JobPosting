@@ -1,11 +1,12 @@
 from django.urls import path
 from rest_framework.routers import DefaultRouter
 
+
 from .views import UserDetailsView, ChangeUserAPIView, UsersView, Job_postingDetailsView, ChangeJob_postingAPIView, \
     Job_postingView, HRRsView, HRRDetailsView, ChangeHRRAPIView, CompanyView, ChangeCompanyAPIView, CompanyDetailsView, \
     Job_postings_for_companyView, remove_employee, create_hrrView, addEndUserEmployer, addApplication, \
     DepartmentDetailsView, create_department_for_company
-
+#
 # urlpatterns = [
 #   path('ViewSet/', include(router.urls)),
 #  path('ViewSet/<int:pk>/', include(router.urls)),
