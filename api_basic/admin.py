@@ -11,10 +11,11 @@ from .models import Department
 
 # from .models import Manager_job_posting
 from .models import Application
+
 # from .models import CoursesForInterShipApps
 # from .models import InternshipJobPosting
 
-# Register your models here.
+# Register your models here...
 admin.site.register(HRRUser)
 admin.site.register(EndUser)
 admin.site.register(Company)
