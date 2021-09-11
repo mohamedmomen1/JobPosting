@@ -5,7 +5,7 @@ from rest_framework.routers import DefaultRouter
 from .views import UserDetailsView, ChangeUserAPIView, UsersView, Job_postingDetailsView, ChangeJob_postingAPIView, \
     Job_postingView, HRRsView, HRRDetailsView, ChangeHRRAPIView, CompanyView, ChangeCompanyAPIView, CompanyDetailsView, \
     Job_postings_for_companyView, remove_employee, create_hrrView, addEndUserEmployer, addApplication, \
-    DepartmentDetailsView, create_department_for_company
+    DepartmentDetailsView, create_department_for_company,EmployerList
 #
 # urlpatterns = [
 #   path('ViewSet/', include(router.urls)),
@@ -39,7 +39,8 @@ urlpatterns = [
 
     # path('Enduserlist', Enduserlist.as_view()),
     path('removeEmployer/<int:username>', remove_employee.as_view()),
-
+    path('EmployerList/', EmployerList.as_view()),
+    
     path('createDepartment', create_department_for_company.as_view()),
     path('Department/<int:pk>', DepartmentDetailsView.as_view()),
     path('addapplication', addApplication.as_view()),

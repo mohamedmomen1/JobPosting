@@ -11,13 +11,7 @@ class EnduserSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
         def create(self, validated_data: dict):
-            enduser = EndUser.objects.create(username=validated_data['username'],
-                                             password=validated_data['password'],
-                                             first_name=validated_data['first_name'],
-                                             last_name=validated_data['last_name'],
-
-                                             )
-            EndUserEmployer.objects.create(
+            enduser = EndUserEmployer.objects.create(
                 begin_date=validated_data['begin_date'],
                 end_date=validated_data['end_date'],
                 position=validated_data['position'],
@@ -53,6 +47,8 @@ class EndUserEmployerSerializer(serializers.ModelSerializer):
     class Meta:
         model = EndUserEmployer
         fields = '__all__'
+
+
 
 
 class CompanySerializer(serializers.ModelSerializer):
