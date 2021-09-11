@@ -4,7 +4,7 @@ from .models import EndUser
 from .models import Company
 from .models import HRRUser
 # from .models import Eu_emails
-# from .models import Employment_history
+from .models import EmploymentHistory
 from .models import EndUserEmployer
 from .models import JobPosting
 from .models import Department
@@ -20,7 +20,7 @@ admin.site.register(EndUser)
 admin.site.register(Company)
 admin.site.register(Department)
 # admin.site.register(Eu_emails)
-# admin.site.register(Employment_history)
+admin.site.register(EmploymentHistory)
 admin.site.register(EndUserEmployer)
 admin.site.register(JobPosting)
 # admin.site.register(Manager_job_posting)

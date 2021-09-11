@@ -24,9 +24,10 @@ urlpatterns = [
     # Company
     path('user/<int:pk>', UserDetailsView.as_view()),
     path('user/', UsersView.as_view()),
+    path('addEndUserEmployer/', addEndUserEmployer.as_view()),
 
     path('user/<int:pk>/change', ChangeUserAPIView.as_view()),
-
+    path('createHRR', create_hrrView.as_view()),
     path('HRR/<int:pk>', HRRDetailsView.as_view()),
     path('HRR/', HRRsView.as_view()),
     path('HRR/<int:pk>/change', ChangeHRRAPIView.as_view()),
@@ -35,11 +36,9 @@ urlpatterns = [
     path('Company/', CompanyView.as_view()),
     path('Company/<int:pk>/change', ChangeCompanyAPIView.as_view()),
 
-    path('addEndUserEmployer/', addEndUserEmployer.as_view()),
     # path('Enduserlist', Enduserlist.as_view()),
     path('removeEmployer/<int:username>', remove_employee.as_view()),
 
-    path('createHRR', create_hrrView.as_view()),
     path('createDepartment', create_department_for_company.as_view()),
     path('Department/<int:pk>', DepartmentDetailsView.as_view()),
     path('addapplication', addApplication.as_view()),

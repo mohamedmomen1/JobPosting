@@ -4,8 +4,9 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import CreateView
+from django.shortcuts import render
 from django.shortcuts import redirect
-from rest_framework.generics import ListAPIView, RetrieveAPIView, UpdateAPIView, get_object_or_404
+from rest_framework.generics import ListAPIView, RetrieveAPIView, UpdateAPIView, CreateAPIView
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.reverse import reverse
 
@@ -21,7 +22,7 @@ from rest_framework.response import Response
 from rest_framework import status, generics, permissions
 from rest_framework.views import APIView
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
 
 class UserDetailsView(RetrieveAPIView):
@@ -42,12 +43,9 @@ class ChangeUserAPIView(UpdateAPIView):
 
 
 class addEndUserEmployer(CreateView):
-    queryset = EndUserEmployer.objects.all()
+    model = EndUser
     serializer_class = EndUserEmployerSerializer
-
-    def get(self, request, *args, **kwargs):
-        serializer = EndUserEmployerSerializer({EndUser, Company})
-        return Response(serializer.data)
+    fields = '__all__'
 
 
 # def get_form_kwargs(self):
@@ -76,11 +74,11 @@ class HRRsView(ListAPIView):
 
 class create_hrrView(CreateView):
     serializer_class = HRRUserSerializer
-    queryset = HRRUser.objects.all()
-    fields = ['username', 'password', 'first_name', 'last_name', 'end_user']
+    model = HRRUser
+    fields = '__all__'
 
-    def post(self, request, *args, **kwargs):
-        return super(create_hrrView, self).post(request, *args, **kwargs)
+    # def perform_create(self, serializer):
+    #     serializer.save(name=self.request.user)
 
 
 class DepartmentDetailsView(RetrieveAPIView):
@@ -90,12 +88,8 @@ class DepartmentDetailsView(RetrieveAPIView):
 
 class create_department_for_company(CreateView):
     serializer_class = CompanySerializer
-    queryset = Company.objects.all()
+    model = Company
     fields = '__all__'
-
-    def post(self, *args, **kwargs):
-        super().post(*args, **kwargs)
-        return redirect('create_department_for_company')
 
 
 class ChangeHRRAPIView(UpdateAPIView):
@@ -123,8 +117,9 @@ class ChangeCompanyAPIView(UpdateAPIView):
 
 class addApplication(CreateView):
     serializer_class = ApplicationSerializer
+    model = Application
     queryset = Application.objects.all()
-    fields = ['JobPosting', 'EndUser', 'apply_date', 'resume', 'university', 'program', 'gpa', 'standing', 'num_days']
+    fields = '__all__'
 
 
 class Job_postingDetailsView(RetrieveAPIView):
@@ -171,14 +166,7 @@ class remove_employee(APIView):
 
         return Response({"result": "employees delete"})
 
-# class Enduserlist(ListAPIView):
-#   serializer_class = EndUserEmployerSerializer
-#   queryset = EndUserEmployer.objects.all()
 
-
-# def delete(self, request, *args, **kwargs):
-#   employees = EndUserEmployer.objects.filter(user_id=self.kwargs['username'])
-
-#  if employees.count() > 0:
-#     employees.delete()
-#    return Response("Employer deleted", status=status.HTTP_204_NO_CONTENT)
+class EmployerList(ListAPIView):
+    serializer_class = EndUserEmployerSerializer
+    queryset = EndUserEmployer.objects.all()
