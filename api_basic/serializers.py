@@ -62,21 +62,18 @@ class CompanySerializer(serializers.ModelSerializer):
         model = Company
         fields = '__all__'
 
-    def create(self, validated_data: dict):
-        company = Company.objects.create(name=validated_data['name'],
-                                         address=validated_data['address'],
-                                         phone=validated_data['phone'])
-        Department.objects.create(
-            company=Company,
-            department_id=validated_data['department']
-        )
-        return company
-
 
 class DepartmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Department
         fields = '__all__'
+
+        def create(self, validated_data: dict):
+            department = Department.objects.create(
+                company=Company,
+                department_id=validated_data['department']
+            )
+            return department
 
 
 class ApplicationSerializer(serializers.ModelSerializer):

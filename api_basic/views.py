@@ -42,10 +42,10 @@ class ChangeUserAPIView(UpdateAPIView):
     queryset = EndUser.objects.all()
 
 
-class addEndUserEmployer(CreateView):
-    model = EndUser
+class addEndUserEmployer(CreateAPIView):
+    # model = EndUserEmployer
     serializer_class = EndUserEmployerSerializer
-    fields = '__all__'
+    # fields = '__all__'
 
 
 # def get_form_kwargs(self):
@@ -72,7 +72,7 @@ class HRRsView(ListAPIView):
     queryset = HRRUser.objects.all()
 
 
-class create_hrrView(CreateView):
+class create_hrrView(CreateAPIView):
     serializer_class = HRRUserSerializer
     model = HRRUser
     fields = '__all__'
@@ -86,9 +86,9 @@ class DepartmentDetailsView(RetrieveAPIView):
     queryset = Department.objects.all()
 
 
-class create_department_for_company(CreateView):
-    serializer_class = CompanySerializer
-    model = Company
+class create_department_for_company(CreateAPIView):
+    serializer_class = DepartmentSerializer
+    model = Department
     fields = '__all__'
 
 
@@ -115,11 +115,10 @@ class ChangeCompanyAPIView(UpdateAPIView):
     queryset = Company.objects.all()
 
 
-class addApplication(CreateView):
+class addApplication(CreateAPIView):
     serializer_class = ApplicationSerializer
     model = Application
-    queryset = Application.objects.all()
-    fields = '__all__'
+    # fields = '__all__'
 
 
 class Job_postingDetailsView(RetrieveAPIView):
