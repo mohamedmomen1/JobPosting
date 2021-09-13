@@ -1,7 +1,10 @@
+import datetime
+
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect
+from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import CreateView
 from django.shortcuts import render
@@ -10,12 +13,12 @@ from rest_framework.generics import ListAPIView, RetrieveAPIView, UpdateAPIView,
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.reverse import reverse
 
-from .models import EndUser, JobPosting, HRRUser, Company, Department, EndUserEmployer, Application
+from .models import EndUser, JobPosting, HRRUser, Company, Department, EndUserEmployer, Application, EmploymentHistory
 from rest_framework.response import Response
 from rest_framework import generics, viewsets
 
 from .serializers import EnduserSerializer, Job_postingSerializer, HRRUserSerializer, CompanySerializer, \
-    DepartmentSerializer, EndUserEmployerSerializer, ApplicationSerializer
+    DepartmentSerializer, EndUserEmployerSerializer, ApplicationSerializer, EmploymentHistorySerializer
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -159,10 +162,8 @@ class remove_employee(APIView):
     queryset = EndUserEmployer.objects.all()
 
     def delete(self, request, *args, **kwargs):
-        employees = EndUserEmployer.objects.filter(user_id=self.kwargs['username'])
-
+        employees = EndUserEmployer.objects.filter(id=self.kwargs['username'])
         employees.delete()
-
         return Response({"result": "employees delete"})
 
 

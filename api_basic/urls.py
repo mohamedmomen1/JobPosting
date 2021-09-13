@@ -25,7 +25,7 @@ urlpatterns = [
     # Company
     path('user/<int:pk>', UserDetailsView.as_view()),
     path('user/', UsersView.as_view()),
-    path('addEndUserEmployer/', addEndUserEmployer.as_view()),
+    path('user/add', addEndUserEmployer.as_view()),
 
     path('user/<int:pk>/change', ChangeUserAPIView.as_view()),
     path('createHRR', create_hrrView.as_view()),

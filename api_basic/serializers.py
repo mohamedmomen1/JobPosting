@@ -1,3 +1,6 @@
+import datetime
+
+from django.utils import timezone
 from rest_framework import serializers
 from .models import EndUser, JobPosting, ManagerJobPosting, HRRUser, Company, Department, EndUserEmployer, Application, \
     EmploymentHistory
@@ -11,14 +14,14 @@ class EnduserSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
         def create(self, validated_data: dict):
-            enduser = EndUserEmployer.objects.create(
-                begin_date=validated_data['begin_date'],
-                end_date=validated_data['end_date'],
-                position=validated_data['position'],
-                user=EndUser.username,
-                Company=Company
-            )
-            return enduser
+            endUser = EndUser.objects.create(username=validated_data['username'],
+                                             password=validated_data['password'],
+                                             first_name=validated_data['first_name'],
+                                             last_name=validated_data['last_name'],
+                                             end_user=EndUser.username
+
+                                             )
+            return endUser
 
 
 class EmploymentHistorySerializer(serializers.ModelSerializer):
@@ -48,7 +51,22 @@ class EndUserEmployerSerializer(serializers.ModelSerializer):
         model = EndUserEmployer
         fields = '__all__'
 
+        def create(self, validated_data: dict):
+            employer = EndUserEmployer.objects.create(user=validated_data['user'],
+                                                      company=validated_data['company'],
+                                                      begin_date=validated_data['begin_date'],
 
+                                                      )
+            if employer.objects.create():
+                EmploymentHistory.objects.create(
+                    begin_date=validated_data[EndUserEmployer.begin_date],
+                    end_date=validated_data[timezone.now()],
+                    position=validated_data[1],
+                    user=validated_data[EndUserEmployer.user],
+                    company=validated_data[EndUserEmployer.company]
+                )
+
+            return employer
 
 
 class CompanySerializer(serializers.ModelSerializer):
