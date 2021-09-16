@@ -1,11 +1,10 @@
 from django.contrib import admin
 # from .models import hRRs
-from .models import EndUser
+from .models import EndUser, Employer
 from .models import Company
 from .models import HRRUser
 # from .models import Eu_emails
 from .models import EmploymentHistory
-from .models import EndUserEmployer
 from .models import JobPosting
 from .models import Department
 
@@ -22,7 +21,7 @@ admin.site.register(Company)
 admin.site.register(Department)
 # admin.site.register(Eu_emails)
 admin.site.register(EmploymentHistory)
-admin.site.register(EndUserEmployer)
+admin.site.register(Employer)
 admin.site.register(JobPosting)
 # admin.site.register(Manager_job_posting)
 admin.site.register(Application)

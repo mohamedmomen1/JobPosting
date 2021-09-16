@@ -1,54 +1,50 @@
-import datetime
-
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import redirect
-from django.utils import timezone
-from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import CreateView
-from django.shortcuts import render
-from django.shortcuts import redirect
+import username as username
+from rest_framework import request, serializers
 from rest_framework.generics import ListAPIView, RetrieveAPIView, UpdateAPIView, CreateAPIView
-from rest_framework.parsers import FormParser, MultiPartParser
-from rest_framework.reverse import reverse
+from rest_framework.mixins import CreateModelMixin
 
-from .models import EndUser, JobPosting, HRRUser, Company, Department, EndUserEmployer, Application, EmploymentHistory
+from .models import EndUser, JobPosting, HRRUser, Company, Department, Employer, Application
+from .serializers import EndUserSerializer, JobPostingSerializer, HRRUserSerializer, CompanySerializer, \
+    DepartmentSerializer, ApplicationSerializer, EmployerSerializer
 from rest_framework.response import Response
-from rest_framework import generics, viewsets
-
-from .serializers import EnduserSerializer, Job_postingSerializer, HRRUserSerializer, CompanySerializer, \
-    DepartmentSerializer, EndUserEmployerSerializer, ApplicationSerializer, EmploymentHistorySerializer
-
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework import status, generics, permissions
 from rest_framework.views import APIView
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from django.contrib.auth.models import User
 
 
 class UserDetailsView(RetrieveAPIView):
-    serializer_class = EnduserSerializer
+    serializer_class = EndUserSerializer
     queryset = EndUser.objects.all()
     # kwarg = key word argument
 
 
 class UsersView(ListAPIView):
-    serializer_class = EnduserSerializer
+    serializer_class = EndUserSerializer
     queryset = EndUser.objects.all()
 
 
 class ChangeUserAPIView(UpdateAPIView):
     # permission_classes = [IsAuthenticated]
-    serializer_class = EnduserSerializer
+    serializer_class = EndUserSerializer
     queryset = EndUser.objects.all()
 
 
-class addEndUserEmployer(CreateAPIView):
+class AddEmployer(CreateAPIView):
+    serializer_class = EmployerSerializer
+
+
     # model = EndUserEmployer
-    serializer_class = EndUserEmployerSerializer
     # fields = '__all__'
+
+
+# def perform_create(self, serializer):
+#   user = serializer.validated_data.get('user_id'),
+#  company = serializer.validated_data.get('company_id')
+# begin_date = serializer.validated_data.get('begin_date')
+# Employer.objects.update_or_create(
+#    user=user,
+#   company=company,
+#  begin_date={"begin_date": begin_date}
+# )
 
 
 # def get_form_kwargs(self):
@@ -64,18 +60,18 @@ class addEndUserEmployer(CreateAPIView):
 #   return EndUserEmployer.objects.filter(username=self.kwargs['username'])
 
 
-class HRRDetailsView(RetrieveAPIView):
+class HrrDetailsView(RetrieveAPIView):
     serializer_class = HRRUserSerializer
     queryset = HRRUser.objects.all()
     # kwarg = key word argument
 
 
-class HRRsView(ListAPIView):
+class HrrView(ListAPIView):
     serializer_class = HRRUserSerializer
     queryset = HRRUser.objects.all()
 
 
-class create_hrrView(CreateAPIView):
+class CreateHrrView(CreateAPIView):
     serializer_class = HRRUserSerializer
     model = HRRUser
     fields = '__all__'
@@ -89,13 +85,13 @@ class DepartmentDetailsView(RetrieveAPIView):
     queryset = Department.objects.all()
 
 
-class create_department_for_company(CreateAPIView):
+class CreateDepartment(CreateAPIView):
     serializer_class = DepartmentSerializer
     model = Department
     fields = '__all__'
 
 
-class ChangeHRRAPIView(UpdateAPIView):
+class ChangeHrrAPIView(UpdateAPIView):
     # permission_classes = [IsAuthenticated]
     serializer_class = HRRUserSerializer
     queryset = HRRUser.objects.all()
@@ -118,33 +114,33 @@ class ChangeCompanyAPIView(UpdateAPIView):
     queryset = Company.objects.all()
 
 
-class addApplication(CreateAPIView):
+class AddApplication(CreateAPIView):
     serializer_class = ApplicationSerializer
     model = Application
     # fields = '__all__'
 
 
-class Job_postingDetailsView(RetrieveAPIView):
-    serializer_class = Job_postingSerializer
+class JobPostingDetailsView(RetrieveAPIView):
+    serializer_class = JobPostingSerializer
     queryset = JobPosting.objects.all()
 
     # kwarg = key word argument
 
 
-class Job_postingView(ListAPIView):
-    serializer_class = Job_postingSerializer
+class JobPostingView(ListAPIView):
+    serializer_class = JobPostingSerializer
     queryset = JobPosting.objects.all()
 
 
-class ChangeJob_postingAPIView(UpdateAPIView):
+class ChangeJobPostingAPIView(UpdateAPIView):
     # permission_classes = [IsAuthenticated]
-    serializer_class = Job_postingSerializer
+    serializer_class = JobPostingSerializer
     queryset = JobPosting.objects.all()
     # kwarg = key word argument
 
 
-class Job_postings_for_companyView(ListAPIView):
-    serializer_class = Job_postingSerializer
+class JobPostingsForCompanyView(ListAPIView):
+    serializer_class = JobPostingSerializer
     queryset = JobPosting.objects.all()
     # queryset = JobPosting.objects.filter(company__name=Company)
     lookup_url_kwarg = 'company'
@@ -158,15 +154,15 @@ class Job_postings_for_companyView(ListAPIView):
 
 
 class remove_employee(APIView):
-    serializer_class = EndUserEmployerSerializer
-    queryset = EndUserEmployer.objects.all()
+    serializer_class = EmployerSerializer
+    queryset = Employer.objects.all()
 
     def delete(self, request, *args, **kwargs):
-        employees = EndUserEmployer.objects.filter(id=self.kwargs['username'])
+        employees = Employer.objects.filter(id=self.kwargs['username'])
         employees.delete()
         return Response({"result": "employees delete"})
 
 
 class EmployerList(ListAPIView):
-    serializer_class = EndUserEmployerSerializer
-    queryset = EndUserEmployer.objects.all()
+    serializer_class = EmployerSerializer
+    queryset = Employer.objects.all()

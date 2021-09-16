@@ -1,27 +1,28 @@
-import datetime
-
 from django.utils import timezone
-from rest_framework import serializers
-from .models import EndUser, JobPosting, ManagerJobPosting, HRRUser, Company, Department, EndUserEmployer, Application, \
-    EmploymentHistory
-from django.db import models
+from rest_framework import serializers, status
+from rest_framework.fields import empty
+from django.contrib.auth.models import User
+from rest_framework.response import Response
+
+from .models import EndUser, JobPosting, ManagerJobPosting, HRRUser, Company, Department, Employer, \
+    Application, EmploymentHistory, InternshipJobPosting
 
 
-class EnduserSerializer(serializers.ModelSerializer):
+class EndUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = EndUser
         # fields = ['id', 'title', 'author', 'email']
         fields = '__all__'
 
-        def create(self, validated_data: dict):
-            endUser = EndUser.objects.create(username=validated_data['username'],
-                                             password=validated_data['password'],
-                                             first_name=validated_data['first_name'],
-                                             last_name=validated_data['last_name'],
-                                             end_user=EndUser.username
+    def create(self, validated_data: dict):
+        endUser = EndUser.objects.create(username=validated_data['username'],
+                                         password=validated_data['password'],
+                                         first_name=validated_data['first_name'],
+                                         last_name=validated_data['last_name'],
+                                         end_user=EndUser.username
 
-                                             )
-            return endUser
+                                         )
+        return endUser
 
 
 class EmploymentHistorySerializer(serializers.ModelSerializer):
@@ -36,37 +37,49 @@ class HRRUserSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def create(self, validated_data: dict):
-        hrruser = HRRUser.objects.create(username=validated_data['username'],
+        hrrUser = HRRUser.objects.create(username=validated_data['username'],
                                          password=validated_data['password'],
                                          first_name=validated_data['first_name'],
                                          last_name=validated_data['last_name'],
                                          end_user=validated_data['end_user'],
 
                                          )
-        return hrruser
+        return hrrUser
 
 
-class EndUserEmployerSerializer(serializers.ModelSerializer):
+class EmployerSerializer(serializers.ModelSerializer):
     class Meta:
-        model = EndUserEmployer
+        model = Employer
         fields = '__all__'
 
-        def create(self, validated_data: dict):
-            employer = EndUserEmployer.objects.create(user=validated_data['user'],
-                                                      company=validated_data['company'],
-                                                      begin_date=validated_data['begin_date'],
+    def post(self, request):
+        serialized = EmployerSerializer(data=request.data)
+        if serialized.is_valid():
+            u = User.objects.filter(user=serialized.data['user'])
+            user = User.objects.get(username=serialized.data['user'])
+            if len(u) > 0:
+                employer, created = Employer.objects.get_or_create(user=user)
+                return Response({'Employer': employer.key}, status=status.HTTP_200_OK)
 
-                                                      )
-            if employer.objects.create():
-                EmploymentHistory.objects.create(
-                    begin_date=validated_data[EndUserEmployer.begin_date],
-                    end_date=validated_data[timezone.now()],
-                    position=validated_data[1],
-                    user=validated_data[EndUserEmployer.user],
-                    company=validated_data[EndUserEmployer.company]
-                )
 
-            return employer
+#  def update(self, instance, validated_data):
+# validated data doesn't have email here, that's why getting value from self.initial_data
+#     if self.initial_data.get("user"):
+
+#           instance.user.user = self.initial_data.get("user")
+#            instance.user.save()
+
+#      instance.save()
+#     return instance
+# user = serializers.CharField(required=False)
+
+
+# if not Employer.objects.filter(user=user).exists():
+#    class Meta:
+#       model = Employer
+#      fields = '__all__'
+# else:
+#   print('this is alredy exists')
 
 
 class CompanySerializer(serializers.ModelSerializer):
@@ -82,34 +95,14 @@ class DepartmentSerializer(serializers.ModelSerializer):
         model = Department
         fields = '__all__'
 
-        def create(self, validated_data: dict):
-            department = Department.objects.create(
-                company=Company,
-                department_id=validated_data['department']
-            )
-            return department
-
 
 class ApplicationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Application
         fields = '__all__'
 
-        def create(self, validated_data: dict):
-            application = Application.objects.create(job_posting=validated_data['job_posting'],
-                                                     user=validated_data['user'],
-                                                     apply_date=validated_data['apply_date'],
-                                                     resume=validated_data['resume'],
-                                                     university=validated_data['university'],
-                                                     program=validated_data['program'],
-                                                     gpa=validated_data['gpa'],
-                                                     standing=validated_data['standing'],
-                                                     num_days=validated_data['num_days'],
-                                                     )
-            return application
 
-
-class Job_postingSerializer(serializers.ModelSerializer):
+class JobPostingSerializer(serializers.ModelSerializer):
     department = serializers.IntegerField(required=False)
 
     class Meta:
@@ -126,13 +119,17 @@ class Job_postingSerializer(serializers.ModelSerializer):
                                                 company=validated_data['company'],
                                                 is_man_or_intern=validated_data['is_man_or_intern'],
                                                 contract_type=validated_data['contract_type'],
-                                                minimum_days=validated_data.get('minimum_days', None),
                                                 kind=validated_data['kind'])
 
         if job_posting.kind == 'manager':
             ManagerJobPosting.objects.create(
                 job_posting=job_posting,
                 department_id=validated_data['department']
+            )
+        if job_posting.kind == 'Intern':
+            InternshipJobPosting.objects.create(
+                job_posting=job_posting,
+                minimum_days=validated_data.get('minimum_days')
             )
 
         return job_posting

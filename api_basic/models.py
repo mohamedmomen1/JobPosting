@@ -59,7 +59,7 @@ class EmploymentHistory(models.Model):
         return self.beginDate
 
 
-class EndUserEmployer(models.Model):
+class Employer(models.Model):
     user = models.ForeignKey(EndUser, on_delete=models.PROTECT)
     company = models.ForeignKey(Company, on_delete=models.PROTECT)
     begin_date = models.DateTimeField()
@@ -81,7 +81,6 @@ class JobPosting(models.Model):
     is_man_or_intern = models.CharField(max_length=100)
     contract_type = models.CharField(max_length=100)
 
-    minimum_days = models.IntegerField(null=True, blank=True)
     kind = models.CharField(max_length=100)
 
     def __str__(self):
@@ -92,7 +91,8 @@ class Department(models.Model):
     name = models.CharField(max_length=100)
     size = models.IntegerField()
     company = models.ForeignKey(Company, on_delete=models.PROTECT)
-    job_posting = models.ForeignKey(JobPosting, on_delete=models.PROTECT)
+
+    # job_posting = models.ForeignKey(JobPosting, on_delete=models.PROTECT)
 
     # def get_absolute_url(self):
     #     return f"/client/Department/{self.id}"
@@ -103,8 +103,6 @@ class Department(models.Model):
 
 class ManagerJobPosting(models.Model):
     job_posting = models.ForeignKey(JobPosting, on_delete=models.PROTECT)
-    dept_name = models.CharField(max_length=100)
-    dept_size = models.IntegerField()
     department = models.ForeignKey('Department', on_delete=models.PROTECT)
 
     def __str__(self):
