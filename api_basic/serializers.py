@@ -52,15 +52,6 @@ class EmployerSerializer(serializers.ModelSerializer):
         model = Employer
         fields = '__all__'
 
-    def post(self, request):
-        serialized = EmployerSerializer(data=request.data)
-        if serialized.is_valid():
-            u = User.objects.filter(user=serialized.data['user'])
-            user = User.objects.get(username=serialized.data['user'])
-            if len(u) > 0:
-                employer, created = Employer.objects.get_or_create(user=user)
-                return Response({'Employer': employer.key}, status=status.HTTP_200_OK)
-
 
 #  def update(self, instance, validated_data):
 # validated data doesn't have email here, that's why getting value from self.initial_data
@@ -69,7 +60,7 @@ class EmployerSerializer(serializers.ModelSerializer):
 #           instance.user.user = self.initial_data.get("user")
 #            instance.user.save()
 
-#      instance.save()
+#     instance.save()
 #     return instance
 # user = serializers.CharField(required=False)
 

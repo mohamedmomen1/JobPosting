@@ -32,21 +32,6 @@ class AddEmployer(CreateAPIView):
     serializer_class = EmployerSerializer
 
 
-    # model = EndUserEmployer
-    # fields = '__all__'
-
-
-# def perform_create(self, serializer):
-#   user = serializer.validated_data.get('user_id'),
-#  company = serializer.validated_data.get('company_id')
-# begin_date = serializer.validated_data.get('begin_date')
-# Employer.objects.update_or_create(
-#    user=user,
-#   company=company,
-#  begin_date={"begin_date": begin_date}
-# )
-
-
 # def get_form_kwargs(self):
 #   kwargs = super(addEndUserEmployer, self).get_form_kwargs()
 #  kwargs.update({'user': self.request.user})

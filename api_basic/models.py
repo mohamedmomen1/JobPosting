@@ -60,7 +60,7 @@ class EmploymentHistory(models.Model):
 
 
 class Employer(models.Model):
-    user = models.ForeignKey(EndUser, on_delete=models.PROTECT)
+    user = models.OneToOneField(EndUser, on_delete=models.PROTECT)
     company = models.ForeignKey(Company, on_delete=models.PROTECT)
     begin_date = models.DateTimeField()
 
