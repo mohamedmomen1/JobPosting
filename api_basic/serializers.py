@@ -30,6 +30,16 @@ class EmploymentHistorySerializer(serializers.ModelSerializer):
         model = EmploymentHistory
         fields = '__all__'
 
+    def create(self, validated_data: dict):
+        employerHistory = EmploymentHistory.objects.create(begin_date=validated_data['begin_date'],
+                                                           end_date=validated_data[timezone.now],
+                                                           position=validated_data['position'],
+                                                           user=validated_data['user'],
+                                                           company=validated_data['company'],
+
+                                                           )
+        return employerHistory
+
 
 class HRRUserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -51,6 +61,14 @@ class EmployerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Employer
         fields = '__all__'
+
+    def create(self, validated_data: dict):
+        employer = Employer.objects.create(user=validated_data['user'],
+                                           company=validated_data['company'],
+                                           begin_date=validated_data['begin_date'],
+
+                                           )
+        return employer
 
 
 #  def update(self, instance, validated_data):

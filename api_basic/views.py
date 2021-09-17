@@ -1,9 +1,12 @@
+from django.http import HttpResponse, HttpResponseNotFound
 from rest_framework.generics import ListAPIView, RetrieveAPIView, UpdateAPIView, CreateAPIView
-from .models import EndUser, JobPosting, HRRUser, Company, Department, Employer, Application
+from .models import EndUser, JobPosting, HRRUser, Company, Department, Employer, Application,EmploymentHistory
 from .serializers import EndUserSerializer, JobPostingSerializer, HRRUserSerializer, CompanySerializer, \
-    DepartmentSerializer, ApplicationSerializer, EmployerSerializer
+    DepartmentSerializer, ApplicationSerializer, EmployerSerializer,EmploymentHistorySerializer
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.utils import timezone
+
 
 
 class UserDetailsView(RetrieveAPIView):
@@ -25,6 +28,8 @@ class ChangeUserAPIView(UpdateAPIView):
 
 class AddEmployer(CreateAPIView):
     serializer_class = EmployerSerializer
+    model = Employer
+    fields = '__all__'
 
 
 class HrrDetailsView(RetrieveAPIView):
@@ -123,6 +128,15 @@ class JobPostingsForCompanyView(ListAPIView):
 class remove_employee(APIView):
     serializer_class = EmployerSerializer
     queryset = Employer.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        EmploymentHistory.objects.create(begin_date=[Employer.begin_date],
+                                         end_date=[timezone.now],
+                                         position=["print"],
+                                         user=[Employer.user],
+                                         company=[Employer.company]
+
+                                         )
 
     def delete(self, request, *args, **kwargs):
         employees = Employer.objects.filter(id=self.kwargs['username'])
