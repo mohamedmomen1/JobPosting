@@ -19,7 +19,7 @@ class HRRUser(models.Model):
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
 
-    end_user = models.ForeignKey(EndUser, on_delete=models.PROTECT)
+    end_user = models.OneToOneField(EndUser, on_delete=models.PROTECT)
 
     def __str__(self):
         return self.username
@@ -35,7 +35,7 @@ class Company(models.Model):
 
 
 class EndUserEmail(models.Model):
-    user = models.ForeignKey(EndUser, on_delete=models.PROTECT)
+    user = models.OneToOneField(EndUser, on_delete=models.PROTECT)
     email = models.EmailField(max_length=100)
 
     def __str__(self):

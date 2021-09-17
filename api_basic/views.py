@@ -1,14 +1,9 @@
-import username as username
-from rest_framework import request, serializers
 from rest_framework.generics import ListAPIView, RetrieveAPIView, UpdateAPIView, CreateAPIView
-from rest_framework.mixins import CreateModelMixin
-
 from .models import EndUser, JobPosting, HRRUser, Company, Department, Employer, Application
 from .serializers import EndUserSerializer, JobPostingSerializer, HRRUserSerializer, CompanySerializer, \
     DepartmentSerializer, ApplicationSerializer, EmployerSerializer
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django.contrib.auth.models import User
 
 
 class UserDetailsView(RetrieveAPIView):
@@ -30,19 +25,6 @@ class ChangeUserAPIView(UpdateAPIView):
 
 class AddEmployer(CreateAPIView):
     serializer_class = EmployerSerializer
-
-
-# def get_form_kwargs(self):
-#   kwargs = super(addEndUserEmployer, self).get_form_kwargs()
-#  kwargs.update({'user': self.request.user})
-# return kwargs
-
-
-#  lookup_url_kwarg = 'username'
-# lookup_field = 'username'
-
-# def get_queryset(self):
-#   return EndUserEmployer.objects.filter(username=self.kwargs['username'])
 
 
 class HrrDetailsView(RetrieveAPIView):
